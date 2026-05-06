@@ -12,11 +12,17 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    open-in-view: false
 
   h2:
     console:
       enabled: true
       path: /h2-console
+
+  security:
+    user:
+      name: admin
+      password: enoc
 
 app:
   ignore-session: true
@@ -51,3 +57,7 @@ server:
   servlet:
     context-path: /api/v1
   port: 8080
+
+logging:
+  level:
+    org.springframework.security: WARN
