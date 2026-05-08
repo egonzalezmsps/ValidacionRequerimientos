@@ -1,4 +1,4 @@
-package com.coppel.sla.mappers;
+package com.coppel.sla.mappers.impl;
 
 import com.coppel.sla.dto.ApiResponseDto;
 import com.coppel.sla.entities.ApiConfigEntity;
