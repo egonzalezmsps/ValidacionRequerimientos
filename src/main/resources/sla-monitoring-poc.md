@@ -1,11 +1,13 @@
-#  SLA Monitoring POC - Framework de Trabajo
+# SLA Monitoring POC - Framework de Trabajo
 
-##  Descripción General
+## Descripción General
 
 Este proyecto es una POC (Proof of Concept) para un sistema de monitoreo de APIs basado en métricas de DataDog.
 Permite registrar APIs, configurarlas con SLAs por niveles (tiers), ejecutar evaluaciones automáticas mediante un scheduler y consultar reportes de cumplimiento o brechas (breaches).
 
-# Arquitectura General
+---
+
+## Arquitectura General
 
 - API Management (consulta de APIs disponibles)
 - Monitoring Configuration (definición de SLAs por API)
@@ -14,8 +16,11 @@ Permite registrar APIs, configurarlas con SLAs por niveles (tiers), ejecutar eva
 - Reporting Module (consulta de resultados)
 - Persistence Layer (PostgreSQL / H2 local)
 
-# Modelo de Datos
+---
 
+## Modelo de Datos
+
+```sql
 -- SLA Monitoring POC - PostgreSQL Schema
 
 CREATE TABLE api_config (
@@ -87,87 +92,110 @@ CREATE TABLE sla_metric (
     updated_by VARCHAR(50),
     FOREIGN KEY (report_id) REFERENCES sla_report(id)
 );
+```
 
+---
 
-## 🔹 Auditoría Base
+## Auditoría Base
 
-Todas las entidades heredan de Auditable:
+Todas las entidades heredan de `Auditable`:
 
-- createdAt
-- createdBy
-- updatedAt
-- updatedBy
+| Campo | Tipo |
+|-------|------|
+| createdAt | Timestamp |
+| createdBy | String |
+| updatedAt | Timestamp |
+| updatedBy | String |
 
-## 🔹 Entidades
+---
+
+## Entidades
 
 ### ApiConfig
-- id, name, country, status, monitored, lastChecked
+`id`, `name`, `country`, `status`, `monitored`, `lastChecked`
 
 ### MonitoringConfig
-- id, status, scheduleType, scheduleExpression
+`id`, `status`, `scheduleType`, `scheduleExpression`
 
 ### MonitoringApi
-- id, monitoringId, apiId, tier, status, message
+`id`, `monitoringId`, `apiId`, `tier`, `status`, `message`
 
 ### SlaReport
-- id, apiId, apiName, tier, timestamp, status, totalChecks, passed, failed
+`id`, `apiId`, `apiName`, `tier`, `timestamp`, `status`, `totalChecks`, `passed`, `failed`
 
 ### SlaMetric
-- id, reportId, type, value, threshold, status
+`id`, `reportId`, `type`, `value`, `threshold`, `status`
 
-#  Base de Datos
+---
 
-## Local
-- H2 In-Memory (EN DEFINICION)
+## Base de Datos
 
+| Ambiente | Motor |
+|----------|-------|
+| Local | H2 In-Memory (EN DEFINICION) |
+| GCP | PostgreSQL |
 
-# Flujo del Sistema
+---
 
-## 1. GET /apis
-Consulta APIs disponibles
+## Flujo del Sistema
 
-## 2. POST /monitoring
-Configura APIs + tiers
+### 1. `GET /apis`
+Consulta APIs disponibles.
 
-## 3. Scheduler
+### 2. `POST /monitoring`
+Configura APIs + tiers.
+
+### 3. Scheduler
 Ejecuta cada X minutos:
-- consulta métricas
-- evalúa SLAs
-- guarda reportes
+- Consulta métricas
+- Evalúa SLAs
+- Guarda reportes
 
-## 4. Rules Engine
+### 4. Rules Engine
 Evalúa:
-- latencia
-- disponibilidad
-- error rate
-- throughput
+- Latencia
+- Disponibilidad
+- Error rate
+- Throughput
 
-## 5. GET /reports
-Consulta reportes por API o status
+### 5. `GET /reports`
+Consulta reportes por API o status.
 
-# Estados
+---
 
-MonitoringApi:
-- configured
-- error
+## Estados
 
-SLA:
-- ok
-- breach
+### MonitoringApi
+| Estado | Descripción |
+|--------|-------------|
+| `configured` | API configurada correctamente |
+| `error` | Error en la configuración |
 
-MonitoringConfig:
-- scheduled
-- partial_success
-- failed
+### SLA
+| Estado | Descripción |
+|--------|-------------|
+| `ok` | SLA cumplido |
+| `breach` | SLA incumplido |
 
-#  Decisiones de Diseño
+### MonitoringConfig
+| Estado | Descripción |
+|--------|-------------|
+| `scheduled` | Programado correctamente |
+| `partial_success` | Éxito parcial |
+| `failed` | Falló la ejecución |
 
-- Auditoría centralizada con clase base Auditable
+---
+
+## Decisiones de Diseño
+
+- Auditoría centralizada con clase base `Auditable`
 - Flyway para migraciones
-- H2 para desarrollo
+- H2 para desarrollo local
 - PostgreSQL para GCP
-- Separación MonitoringApi para relación N-N
+- Separación `MonitoringApi` para relación N-N
 
-# Objetivo
+---
+
+## Objetivo
 
 Demostrar arquitectura escalable de monitoreo de APIs basada en SLAs con integración tipo DataDog.
