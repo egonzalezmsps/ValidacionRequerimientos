@@ -2,7 +2,7 @@ package com.coppel.sla.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 @Data
 @Entity
