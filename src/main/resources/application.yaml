@@ -61,3 +61,11 @@ server:
 logging:
   level:
     org.springframework.security: WARN
+
+mulesoft:
+  enabled: true
+  base-url: https://anypoint.mulesoft.com
+  client-id: ${MULESOFT_CLIENT_ID:b6d61cc022164e2482cb17af74e34ca6}
+  client-secret: ${MULESOFT_CLIENT_SECRET:8F1092016D394567951B7B712Ab3aed1}
+  organization-id: ${MULESOFT_ORG_ID:}
+  environment-id: ${MULESOFT_ENV_ID:}
